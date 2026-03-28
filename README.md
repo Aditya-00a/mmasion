@@ -1,6 +1,10 @@
 🧠 MMASION
 Real-Time AI Supervision & Assurance Layer
 
+Team
+- Aditya Sakhale - axs10415@nyu.edu
+- Yash Sharma - ys6587@nyu.edu
+
 MMASION is a live AI supervision system built around a simple idea:
 
 Let one model do the work.
