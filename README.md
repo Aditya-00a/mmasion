@@ -7,6 +7,8 @@ Live AI supervision for Gemma-powered workspaces, with Gemini-based monitoring, 
 - Aditya Sakhale - `axs10415@nyu.edu`
 - Yash Sharma - `ys6587@nyu.edu`
 
+##Presentation 
+https://www.canva.com/design/DAHFP4B7aWw/er896kQv4UOwc87ueOs6RA/edit?utm_content=DAHFP4B7aWw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 ## Overview
 
 MMASION is a live AI supervision system built around a simple idea:
