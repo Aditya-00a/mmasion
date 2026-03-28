@@ -93,7 +93,27 @@ The user works inside Gemma, while MMASION quietly watches:
 8. A human can decide in the Gemma tab what should happen next.
 9. MMASION can generate a plain-language explanation after enough grounded context exists.
 
-## Internal Monitoring Agents
+## Two Agent Layers
+
+MMASION is easiest to understand when the agents are split into two layers:
+
+### 1. Domain agents
+
+These are the task workers MMASION can route to depending on what the user is asking.
+
+| Domain agent | Best used for |
+| --- | --- |
+| `Finance Agent` | Revenue, budgets, dividends, returns, profitability, forecasts, financial approvals |
+| `Operations Agent` | Workflow state, logistics, process health, service delivery, execution bottlenecks |
+| `Legal Agent` | Contracts, policy language, compliance wording, obligations, liability, disclosure risk |
+| `IT Agent` | Systems, architecture, deployments, logs, technical changes, infrastructure operations |
+| `HR Agent` | Employee workflows, hiring, workplace policy, performance-related process, people-sensitive cases |
+| `Healthcare Agent` | Patient-facing workflows, healthcare documents, safety-sensitive health operations |
+| `General Agent` | Fallback intake, broad summarization, mixed-domain tasks when confidence is low |
+
+### 2. Monitor agents
+
+These are MMASION's internal supervision roles. They do not replace the domain worker. They decide whether the work should continue, be revised, or be stopped.
 
 MMASION dynamically activates specialized agents depending on the session:
 
@@ -108,6 +128,50 @@ MMASION dynamically activates specialized agents depending on the session:
 - `Policy Counsel Agent`
 
 These are internal supervision roles, not separate user-facing services.
+
+## Agent Mapping
+
+### Domain agent vs monitor agent
+
+| Question type | Domain agent | Monitor agents that should activate |
+| --- | --- | --- |
+| Finance spreadsheet or market question | `Finance Agent` | `Document Intake Agent`, `Evidence Scope Agent`, `Action Guard` |
+| Contract, compliance, or disclosure wording | `Legal Agent` | `Policy Counsel Agent`, `Action Guard`, `Human Checkpoint Agent` when risky |
+| System or deployment request | `IT Agent` | `Action Guard`, `Evidence Scope Agent`, `Policy Counsel Agent` if policy-sensitive |
+| Employee or workplace workflow | `HR Agent` | `Action Guard`, `Policy Counsel Agent`, `Human Checkpoint Agent` |
+| Healthcare or patient-impact workflow | `Healthcare Agent` | `Data Governance Agent`, `Action Guard`, `Human Checkpoint Agent` |
+| Operational workflow or process question | `Operations Agent` | `Conversation Monitor`, `Action Guard`, `Evidence Scope Agent` |
+| Mixed or unclear task | `General Agent` | `Conversation Monitor`, `Action Guard` |
+
+### Field-to-agent mapping
+
+This is the clearest way to explain which agents should own which fields in the NYC-style reporting workflow.
+
+| Field | Main domain agent | Main monitor agents |
+| --- | --- | --- |
+| `agency` | `Legal Agent` or `Operations Agent` | `Conversation Monitor`, `Policy Counsel Agent` |
+| `tool_name` | `IT Agent` or `Legal Agent` | `Document Intake Agent`, `Conversation Monitor` |
+| `tool_desc` | `IT Agent` or `Operations Agent` | `Document Intake Agent`, `Conversation Monitor` |
+| `purpose_type` | `Operations Agent` | `Conversation Monitor`, `Policy Counsel Agent` |
+| `purpose_desc` | `Operations Agent` | `Conversation Monitor`, `Policy Counsel Agent` |
+| `data_training` | `IT Agent` or `Healthcare Agent` depending on context | `Data Governance Agent` |
+| `data_input` | `IT Agent` or `Healthcare Agent` depending on context | `Data Governance Agent` |
+| `data_output` | `IT Agent` or `Operations Agent` | `Data Governance Agent` |
+| `identifying_info` | `Legal Agent` or `Healthcare Agent` | `Data Governance Agent`, `Policy Counsel Agent` |
+| `computation_type` | `IT Agent` | `Conversation Monitor`, `Policy Counsel Agent` |
+| `population_type` | `Operations Agent` or `Healthcare Agent` | `Conversation Monitor`, `Policy Counsel Agent` |
+| `vendor_name` | `Finance Agent` or `Legal Agent` | `Vendor Risk Agent` |
+| `vendor_desc` | `Finance Agent` or `Legal Agent` | `Vendor Risk Agent` |
+| `updated` | `IT Agent` or `Operations Agent` | `Conversation Monitor` |
+| `updated_desc` | `IT Agent` or `Operations Agent` | `Document Intake Agent`, `Conversation Monitor` |
+
+### Simple presentation rule
+
+When explaining the system live:
+
+- domain agents do the task work
+- monitor agents decide whether that work should be trusted
+- MMASION sits above both and controls whether the session continues
 
 ## Key Features
 
